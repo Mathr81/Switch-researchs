@@ -1,0 +1,76 @@
+<style>
+    body {
+        font-family: sans-serif;
+        background-color: #2196F3;
+        color: white;
+        text-align: center;
+    }
+    
+    .keypress {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border: solid 4px black;
+        margin: 0.5rem;
+        
+        /* Animation */
+        animation: keypressAnimation 75ms ease-out both;
+    }
+</style>
+
+<!-- HTML elements where we will show the detected inputs -->
+<h1 id="title">Press Keys or Buttons on Your Controller...</h1>
+<div class="keys"></div>
+
+<script>
+// Function to add new element with key/button name when pressed
+function appendNewElement(parentSelector, value) {
+    const parent = document.querySelector(parentSelector);
+    const el = document.createElement('span');
+    el.classList.add("keypress");
+    el.textContent = value;
+    parent.appendChild(el);
+}
+
+// Listen for Keyboard Events (e.g., arrow keys, letters...)
+window.addEventListener('keydown', function(event){
+    // Ignore modifier keys like Shift, Ctrl, etc.
+    if (!event.ctrlKey && !event.altKey && !event.metaKey) {
+      let keyName = event.code || event.which;
+      
+      // Display "Arrow Up" instead of just "Up", etc.
+      switch (keyName) {
+          case 'ArrowLeft':
+              keyName += ' (←)';
+            break;
+          
+          case 'ArrowRight':
+             keyName += ' (→)';
+            break;
+              
+          case 'ArrowDown':
+                keyName += ' (↓)';
+            break;
+                  
+          default:
+            break;
+      }
+      
+      appendNewElement('.keys', keyName);
+    }
+});
+
+// Listen for Gamepad Button Presses
+const gamepads = navigator.getGamepads();
+for (let i=0;i <gamepads.length;++i) {
+    window.setInterval(() => {
+        const pad = gamepads[i];
+        if(!pad) return;
+        for (var j=0;j <pad.buttons.length; ++j) {
+            var btn = pad.buttons[j].value;
+            if(btn > 0.8) {
+                appendNewElement('.keys', `Button ${j+1}`);
+            }
+        }
+    }, 100);
+};
+</script>
